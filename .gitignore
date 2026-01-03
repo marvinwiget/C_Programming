@@ -1,0 +1,6 @@
+Cube
+*.o
+SDL/
+.DS_Store
+*.swp
+*~
