@@ -1,4 +1,5 @@
 Cube
+array
 *.o
 SDL/
 .DS_Store
