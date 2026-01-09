@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL.h>
+#include <math.h>
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -16,20 +17,29 @@ typedef struct { Vector3 *vertices; } Cube; // Cube should have 8 vertices
 
 void init(Cube *cube) {
 	cube->vertices = malloc(sizeof(Vector3) * 8);
-	cube->vertices[0] = (Vector3) {0,0,2};
-	cube->vertices[1] = (Vector3) {0,0,3};
-	cube->vertices[2] = (Vector3) {0,1,2};
-	cube->vertices[3] = (Vector3) {0,1,3};
-	cube->vertices[4] = (Vector3) {1,0,2};
-	cube->vertices[5] = (Vector3) {1,0,3};
-	cube->vertices[6] = (Vector3) {1,1,2};
-	cube->vertices[7] = (Vector3) {1,1,3};
+	cube->vertices[0] = (Vector3) {-0.5, -0.5, -0.5};
+    	cube->vertices[1] = (Vector3) {-0.5, -0.5,  0.5};
+    	cube->vertices[2] = (Vector3) {-0.5,  0.5, -0.5};
+    	cube->vertices[3] = (Vector3) {-0.5,  0.5,  0.5};
+    	cube->vertices[4] = (Vector3) { 0.5, -0.5, -0.5};
+    	cube->vertices[5] = (Vector3) { 0.5, -0.5,  0.5};
+    	cube->vertices[6] = (Vector3) { 0.5,  0.5, -0.5};
+    	cube->vertices[7] = (Vector3) { 0.5,  0.5,  0.5};
+}
+
+void rotateY(Cube *cube, float angle) {
+	for(int i=0; i<8; i++) {
+		float oldX = cube->vertices[i].x;
+		cube->vertices[i].x = oldX * cos(angle) - cube->vertices[i].z * sin(angle);
+		cube->vertices[i].z = oldX * sin(angle) + cube->vertices[i].z * cos(angle);
+	}
 }
 
 Vector2 transform(Vector3 *v) {
-	if (v->z < 0.0001f) return (Vector2) {0,0};
-	float newX = v->x/v->z;
-	float newY = v->y/v->z;
+	float offset_z = v->z + 2.5f;
+	if (v->z == 0) return (Vector2) {0,0};
+	float newX = v->x/offset_z;
+	float newY = v->y/offset_z;
 	return (Vector2) {newX, newY};
 }
 
@@ -61,6 +71,7 @@ int main(int argc, char* argv[]) {
 
 	float t = 0;
 
+
 	// main loop 
 	int running = 1;
 	SDL_Event event;
@@ -69,15 +80,17 @@ int main(int argc, char* argv[]) {
 		SDL_Rect bg = (SDL_Rect){0,0,WIDTH,HEIGHT};
 		SDL_FillRect(surface, &bg, 0x00000000);
 		draw(surface, &cube);
-
-		for (int i=0;i<8;i++) {
-			cube.vertices[i].z += t;
-		}
-
+		
+		rotateY(&cube, 0.05f);
+		
+		
 		SDL_UpdateWindowSurface(window);
-		SDL_Delay(16);	
-		t += 0.001;
+		SDL_Delay(16);	 // 16
+		t += 1;
+
 	}
+
+	free(cube.vertices);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 	return 0;
