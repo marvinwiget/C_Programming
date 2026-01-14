@@ -24,38 +24,39 @@ typedef struct {
 } Hidden_Layer;
 
 
-double dotProduct(double *x, double *y);
+
+void activation_ReLU(double *input, int n);
+void activation_SoftMax(double *input, int n);
 
 Hidden_Layer* init_hiddenLayer(int n_input, int n_output);
 void forward(double *prev_output, int n_prev_output, Hidden_Layer *next);
 void destroy_hiddenLayer(Hidden_Layer *l);
 
-void activation_ReLU(int *x) {
-	if (*x < 0) *x = 0;
-	return;
-}
+double Loss();
 
 int main() {
 	srand(time(NULL));
 	
-	Hidden_Layer *layer1 = init_hiddenLayer(3, 3);
-	forward(&from[0], 7, layer1);
+	Hidden_Layer *layer1 = init_hiddenLayer(1, 3);
+	Hidden_Layer *layer2 = init_hiddenLayer(3, 3);
 
-	Hidden_Layer *layer2 = init_hiddenLayer(3,3);
+	forward(&from[0], 7, layer1);
 	forward(layer1->output, layer1->n_output, layer2);
 
 
 
 	destroy_hiddenLayer(layer1);
+	destroy_hiddenLayer(layer2);
 	return 0;
 }
 
-double dotProdut(double *x, double *y, int n) {
-	double sum;
+
+
+void activation_ReLU(double *input, int n) {
 	for (int i=0; i<n; i++) {
-		sum += x[i] + y[i];
+		input[i] = (input[i] > 0) ? input[i] : 0;
 	}
-	return sum;
+	return;
 }
 
 Hidden_Layer* init_hiddenLayer(int n_input, int n_output) {
@@ -67,7 +68,7 @@ Hidden_Layer* init_hiddenLayer(int n_input, int n_output) {
 		return NULL;
 	}
 	for (int i=0; i<n_input * n_output; i++) {
-		l->weights[i] = rand();
+		l->weights[i] = ((double)rand() / (double)RAND_MAX) * 2.0 - 1.0;
 	}
 	// init biase
 	l->biase = malloc(sizeof(double) * n_output);
@@ -87,7 +88,16 @@ Hidden_Layer* init_hiddenLayer(int n_input, int n_output) {
 }
 
 void forward(double *prev_output, int n_prev_output, Hidden_Layer *next) {
-	
+	// dot product
+	for (int i=0; i<next->n_output; i++) {
+		double sum = 0.0;
+		for (int j=0; j<next->n_input; j++) {
+			sum += prev_output[j] * next->weights[i * next->n_input + j];
+		}
+		next->output[i] = sum + next->biase[i];
+	}
+	// activation function
+	activation_ReLU(next->output, next->n_output);
 }
 
 void destroy_hiddenLayer(Hidden_Layer *l) {
