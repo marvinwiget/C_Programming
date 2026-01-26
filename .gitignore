@@ -1,0 +1,7 @@
+exec/
+lib/
+
+*.o
+.DS_Store
+*.swp
+*~
