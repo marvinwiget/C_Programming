@@ -18,6 +18,10 @@ typedef struct {
     matrix **bs;
     matrix **as;
 
+    matrix **g_ws;
+    matrix **g_bs;
+    matrix **g_as;
+
     activation_func act_hidden;
     activation_func act_output;
     int *arch; // 0 index: input layer, n input: output layer

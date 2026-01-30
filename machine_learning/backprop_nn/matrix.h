@@ -22,6 +22,8 @@ void mat_randomize(matrix *mat); // between -1 and 1
 void mat_fill(matrix *mat, float num);
 void mat_copy(matrix *dst, const matrix *src);
 void mat_transpose(matrix *mat);
+matrix* mat_row(const matrix *mat, int row);
+matrix* mat_col(const matrix *mat, int col);
 
 float mat_max(const matrix *mat);
 float mat_min(const matrix *mat);

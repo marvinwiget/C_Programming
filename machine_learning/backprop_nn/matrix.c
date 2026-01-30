@@ -106,6 +106,28 @@ void mat_transpose(matrix *mat) {
     mat->cols = temp;
 }
 
+matrix* mat_row(const matrix *mat, int row) {
+    assert(mat != NULL);
+    
+    matrix *row_mat = mat_alloc(1, mat->cols);
+
+    for (int i = 0; i < mat->cols; i++) {
+        row_mat->data[i] = MAT_AT(mat, row, i);
+    } 
+    return row_mat;
+}
+
+matrix* mat_col(const matrix *mat, int col) {
+    assert(mat != NULL);
+    
+    matrix *col_mat = mat_alloc(mat->rows, 1);
+
+    for (int i = 0; i < mat->rows; i++) {
+        col_mat->data[i] = MAT_AT(mat, i, col);
+    } 
+    return col_mat;
+}
+
 float mat_max(const matrix *mat) {
     assert(mat != NULL);
     assert(mat->data != NULL);
