@@ -28,6 +28,17 @@ matrix* mat_load(FILE *file, int rows, int cols) {
     return (matrix*) malloc(sizeof(matrix));
 }
 
+matrix* mat_arrToMat(float *arr, int rows, int cols) {
+    matrix *mat = mat_alloc(rows, cols);
+    
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            MAT_AT(mat, i, j) = arr[i * cols + j];
+        }
+    }
+    return mat;
+}
+
 void mat_free(matrix *mat) {
     if (mat == NULL) return;
     
@@ -60,6 +71,33 @@ void mat_print(const matrix *mat) {
     return;
 }
 
+float mat_max(const matrix *mat) {
+    assert(mat != NULL);
+    assert(mat->data != NULL);
+
+    float max = MAT_AT(mat, 0, 0);
+    int size = mat->rows * mat->cols;
+    for (int i = 0; i < size; i++) {
+        if (mat->data[i] > max) {
+            max = mat->data[i];
+        }
+    }
+    return max;
+}
+
+float mat_min(const matrix *mat) {
+    assert(mat != NULL);
+    assert(mat->data != NULL);
+
+    float min = MAT_AT(mat, 0, 0);
+    int size = mat->rows * mat->cols;
+    for (int i = 0;i < size; i++) {
+        if (mat->data[i] < min) {
+            min = mat->data[i];
+        }
+    }
+    return min;
+}
 
 void mat_randomize(matrix *mat) {
     assert(mat != NULL);
@@ -67,7 +105,7 @@ void mat_randomize(matrix *mat) {
 
     int size = mat->rows * mat->cols;
     for (int i = 0; i < size; i++) {
-        mat->data[i] = ((float) rand() / (float) RAND_MAX) * 2.0f + 1.0f;
+        mat->data[i] = ((float) rand() / (float) RAND_MAX) * 2.0f - 1.0f;
     }
 }
 
@@ -78,6 +116,19 @@ void mat_fill(matrix *mat, float num) {
     int size = mat->rows * mat->cols;
     for (int i = 0; i < size; i++) {
         mat->data[i] = num;
+    }
+}
+
+void mat_normalize(matrix *mat) {
+    float max = mat_max(mat);
+    float min = mat_min(mat);
+    float range = max - min;
+    
+    if (range == 0.0f) return;
+
+    int size = mat->rows * mat->cols;
+    for (int i = 0; i < size; i++) {
+        mat->data[i] = (mat->data[i] - min) / range;
     }
 }
 
@@ -126,34 +177,6 @@ matrix* mat_col(const matrix *mat, int col) {
         col_mat->data[i] = MAT_AT(mat, i, col);
     } 
     return col_mat;
-}
-
-float mat_max(const matrix *mat) {
-    assert(mat != NULL);
-    assert(mat->data != NULL);
-
-    float max = MAT_AT(mat, 0, 0);
-    int size = mat->rows * mat->cols;
-    for (int i = 0; i < size; i++) {
-        if (mat->data[i] > max) {
-            max = mat->data[i];
-        }
-    }
-    return max;
-}
-
-float mat_min(const matrix *mat) {
-    assert(mat != NULL);
-    assert(mat->data != NULL);
-
-    float min = MAT_AT(mat, 0, 0);
-    int size = mat->rows * mat->cols;
-    for (int i = 0;i < size; i++) {
-        if (mat->data[i] < min) {
-            min = mat->data[i];
-        }
-    }
-    return min;
 }
 
 void mat_scale(matrix *mat, float scalar) {

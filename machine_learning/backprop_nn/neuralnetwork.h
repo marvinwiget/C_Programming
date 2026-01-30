@@ -7,7 +7,6 @@ typedef enum {
     NONE,
     RELU,
     SIGMOID,
-    SOFTMAX
 } activation_func;
 
 typedef struct {

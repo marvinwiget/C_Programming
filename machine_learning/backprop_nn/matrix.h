@@ -15,11 +15,13 @@ typedef struct {
 // operations 
 matrix* mat_alloc(int rows, int cols);
 matrix* mat_load(FILE *file, int rows, int cols);
+matrix* mat_arrToMat(float *arr, int rows, int cols);
 void mat_free(matrix *mat);
 void mat_print(const matrix *mat);
 
 void mat_randomize(matrix *mat); // between -1 and 1
 void mat_fill(matrix *mat, float num);
+void mat_normalize(matrix *mat);
 void mat_copy(matrix *dst, const matrix *src);
 void mat_transpose(matrix *mat);
 matrix* mat_row(const matrix *mat, int row);
